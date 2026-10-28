@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  AUTHOR
+  ADMIN
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum Priority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum TicketCategory {
+  ROYALTY
+  ISBN_ISSUES
+  PRINTING
+  DISTRIBUTION
+  PRODUCTION
+  GENERAL
+}
+
+model Author {
+  id           String    @id @map("author_id")
+  name         String
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  role         Role      @default(AUTHOR)
+  phone        String
+  city         String
+  joinedDate   DateTime  @map("joined_date") @db.Date
+  books        Book[]
+  tickets      Ticket[]
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@index([city, joinedDate])
+  @@map("authors")
+}
+
+model Book {
+  id                 String    @id @map("book_id")
+  authorId           String    @map("author_id")
+  author             Author    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  title              String
+  isbn               String    @unique
+  genre              String
+  publicationDate    DateTime? @map("publication_date") @db.Date
+  status             String
+  mrp                Decimal?  @db.Decimal(10, 2)
+  royaltyPerCopy     Decimal?  @map("royalty_per_copy") @db.Decimal(10, 2)
+  totalCopiesSold    Int       @default(0) @map("total_copies_sold")
+  totalRoyaltyEarned Decimal   @default(0) @map("total_royalty_earned") @db.Decimal(12, 2)
+  royaltyPaid        Decimal   @default(0) @map("royalty_paid") @db.Decimal(12, 2)
+  royaltyPending     Decimal   @default(0) @map("royalty_pending") @db.Decimal(12, 2)
+  lastPayoutDate     DateTime? @map("last_payout_date") @db.Date
+  printPartner       String?   @map("print_partner")
+  channels           String[]  @default([])
+  tickets            Ticket[]
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  @@index([authorId, status])
+  @@index([status, publicationDate])
+  @@map("books")
+}
+
+model Ticket {
+  id          String         @id @default(cuid())
+  authorId    String         @map("author_id")
+  author      Author         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  bookId      String?        @map("book_id")
+  book        Book?          @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  subject     String
+  description String         @db.Text
+  category    TicketCategory @default(GENERAL)
+  aiCategory  TicketCategory? @map("ai_category")
+  priority    Priority       @default(MEDIUM)
+  aiPriority  Priority?      @map("ai_priority")
+  status      TicketStatus   @default(OPEN)
+  assignedTo  String?        @map("assigned_to")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  messages    TicketMessage[]
+  notes       InternalNote[]
+
+  @@index([status, priority, createdAt])
+  @@index([authorId, createdAt])
+  @@index([category, status])
+  @@map("tickets")
+}
+
+model TicketMessage {
+  id         String   @id @default(cuid())
+  ticketId   String   @map("ticket_id")
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId   String   @map("sender_id")
+  senderRole Role     @map("sender_role")
+  body       String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([ticketId, createdAt])
+  @@map("ticket_messages")
+}
+
+model InternalNote {
+  id        String   @id @default(cuid())
+  ticketId  String   @map("ticket_id")
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorId  String   @map("author_id")
+  body      String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([ticketId, createdAt])
+  @@map("internal_notes")
+}

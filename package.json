@@ -1,0 +1,7 @@
+{
+  "name": "bookleaf-author-hub",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {"dev":"turbo dev", "build":"turbo build", "lint":"turbo lint", "db:generate":"pnpm --filter @bookleaf/api db:generate", "db:migrate":"pnpm --filter @bookleaf/api db:migrate", "db:seed":"pnpm --filter @bookleaf/api db:seed"},
+  "devDependencies": {"turbo":"^2.3.3", "typescript":"^5.7.2"}
+}
