@@ -1,4 +1,3 @@
-
 import express, { type Request, type Response, type NextFunction } from 'express';
 import cors from 'cors';
 import { createServer } from 'node:http';
@@ -26,10 +25,25 @@ const supportQueue = new Queue('support-events', { connection: redis });
 
 const app = express();
 const server = createServer(app);
-const clientOrigin = process.env.CLIENT_ORIGIN ?? 'http://localhost:5173';
-const io = new Server(server, { cors: { origin: clientOrigin } });
+const clientOrigins = (process.env.CLIENT_ORIGIN ?? 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-app.use(cors({ origin: clientOrigin }));
+const isAllowedClientOrigin = (origin: string | undefined) =>
+  !origin ||
+  clientOrigins.includes(origin) ||
+  /^https:\/\/bookleaf-dnqg-[a-z0-9-]+\.vercel\.app$/.test(origin);
+
+const corsOptions: cors.CorsOptions = {
+  origin(origin, callback) {
+    if (isAllowedClientOrigin(origin)) callback(null, true);
+    else callback(new Error('Origin not allowed by CORS'));
+  },
+};
+
+const io = new Server(server, { cors: corsOptions });
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '1mb' }));
 
 const tokenSecret = process.env.JWT_SECRET ?? 'local-only-change-this-secret';
@@ -57,7 +71,7 @@ function wrap(
 
 function requireAuth(req: AuthedRequest, res: Response, next: NextFunction) {
   try {
-    const header = (req.headers.authorization ?? '').replace(/^Bearer\s+/i, '');
+    const header = (req.headers.authorization ?? '').replace(/^Bearer\\s+/i, '');
     req.user = jwt.verify(header, tokenSecret) as Session;
     next();
   } catch {
