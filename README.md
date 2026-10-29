@@ -1,4 +1,4 @@
-# BookLeaf — Author Support Portal
+[# BookLeaf — Author Support Portal
 
 **A real-time, AI-assisted support platform for authors and support administrators.**
 
@@ -588,5 +588,4 @@ The result is a modular support platform that combines conventional backend engi
 **Project:** BookLeaf Author Support Portal  
 **Architecture:** Full-stack monorepo with REST, real-time communication, caching, and background processing  
 **Status:** Core implementation available; production hardening and live integration validation remain follow-up work
-
-*Note: This project and its dataset are confidential under the assignment requirements. Deploy or share the repository only through channels permitted by those requirements.*
+**Deploy link:**(https://bookleaf-dnqg-301no6z2c-avichal296s-projects.vercel.app/)
