@@ -1,4 +1,3 @@
-
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "services": {
@@ -9,8 +8,7 @@
     "api": {
       "root": "apps/api",
       "framework": "express",
-      "entrypoint": "src/index.ts",
-      "buildCommand": "pnpm run build"
+      "entrypoint": "src/index.ts"
     }
   },
   "rewrites": [
