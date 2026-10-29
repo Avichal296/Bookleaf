@@ -4,21 +4,9 @@
     "web": {
       "root": "apps/web",
       "framework": "vite"
-    },
-    "api": {
-      "root": ".",
-      "framework": "express",
-      "entrypoint": "apps/api/src/index.ts",
-      "buildCommand": "pnpm --filter @bookleaf/api build"
     }
   },
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": {
-        "service": "api"
-      }
-    },
     {
       "source": "/(.*)",
       "destination": {
