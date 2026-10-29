@@ -6,9 +6,10 @@
       "framework": "vite"
     },
     "api": {
-      "root": "apps/api",
+      "root": ".",
       "framework": "express",
-      "entrypoint": "src/index.ts"
+      "entrypoint": "apps/api/src/index.ts",
+      "buildCommand": "pnpm --filter @bookleaf/api build"
     }
   },
   "rewrites": [
