@@ -3,7 +3,7 @@ services:
     name: bookleaf-api
     runtime: node
     plan: free
-    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm --filter @bookleaf/api db:push && pnpm --filter @bookleaf/api db:seed && pnpm --filter @bookleaf/api build
+    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm --filter @bookleaf/api build
     startCommand: node apps/api/dist/src/index.js
     healthCheckPath: /api/health
     envVars:
