@@ -500,8 +500,10 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     return res.status(400).json({ error: { message: 'Invalid request', details: err.flatten() } });
   }
 
-  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
-    return fail(res, 404, 'Record not found');
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === 'P2025') {
+      return fail(res, 404, 'Record not found');
+    }
   }
 
   const isProd = process.env.NODE_ENV === 'production';
