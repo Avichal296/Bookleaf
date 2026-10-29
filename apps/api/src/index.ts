@@ -587,5 +587,5 @@ new Worker(
   { connection: redis, concurrency: 4 },
 );
 
-const port = Number(process.env.API_PORT ?? 4000);
+const port = Number(process.env.PORT ?? process.env.API_PORT ?? 4000);
 server.listen(port, () => console.log(`BookLeaf Support API listening on ${port}`));
