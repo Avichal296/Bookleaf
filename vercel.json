@@ -9,7 +9,8 @@
     "api": {
       "root": "apps/api",
       "framework": "express",
-      "entrypoint": "src/index.ts"
+      "entrypoint": "src/index.ts",
+      "buildCommand": "pnpm run build"
     }
   },
   "rewrites": [
@@ -27,4 +28,3 @@
     }
   ]
 }
-
