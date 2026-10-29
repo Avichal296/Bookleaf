@@ -71,7 +71,7 @@ function wrap(
 
 function requireAuth(req: AuthedRequest, res: Response, next: NextFunction) {
   try {
-    const header = (req.headers.authorization ?? '').replace(/^Bearer\\s+/i, '');
+    const header = (req.headers.authorization ?? '').replace(/^Bearer\s+/i, '');
     req.user = jwt.verify(header, tokenSecret) as Session;
     next();
   } catch {
